@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 # Загружаем .env файл
 basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'))
+load_dotenv(os.path.join(basedir, '.env'), override=True)
 
 # Настройка логирования
 logger = logging.getLogger('START')
