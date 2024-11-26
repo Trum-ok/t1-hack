@@ -1,0 +1,6 @@
+select = ["E", "W", "F", "F841"]
+# ignore = ["E501"]
+ignore = ["F403", "E741", "E402"]
+line-length = 120
+fixable = ["I"]
+fix = true
