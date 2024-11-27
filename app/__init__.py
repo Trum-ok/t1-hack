@@ -1,99 +1,94 @@
-import logging
-from logging.handlers import SMTPHandler, RotatingFileHandler
+# ruff: noqa: F401, F841
 import os
-from flask import Flask, request, current_app
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_login import LoginManager
-from flask_mail import Mail
-from flask_moment import Moment
-from flask_babel import Babel, lazy_gettext as _l
-from elasticsearch import Elasticsearch
-from redis import Redis
-import rq
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+import asyncio
+import logging
+import asyncpg
+
+from flask import Flask
+# from elasticsearch import Elasticsearch
+# from redis import Redis
+
 from config import Config
+from db.app_db.main import Database
+from utils.log import formatter  # Логгер настроен в utils.log
+
+flask_logger = logging.getLogger("web")
+# TODO: починить логи
 
 
-def get_locale():
-    return request.accept_languages.best_match(current_app.config['LANGUAGES'])
+class T1App(Flask):
+    def __init__(self, import_name, db=None, **kwargs):
+        """
+        Расширенный класс Flask с поддержкой указания базы данных.
+
+        :param import_name: Имя приложения.
+        :param db: Объект базы данных (по умолчанию None).
+        :param kwargs: Дополнительные аргументы, передаваемые в Flask.
+        """
+        super().__init__(import_name, **kwargs)
+        self.db: Database = db
 
 
-db = SQLAlchemy()
-migrate = Migrate()
-login = LoginManager()
-login.login_view = 'auth.login'
-login.login_message = _l('Please log in to access this page.')
-mail = Mail()
-moment = Moment()
-babel = Babel()
+async def get_pool() -> asyncpg.Pool:
+    """
+    Создание пула подключений к базе данных PostgreSQL.
+    """
+    try:
+        pool = await asyncpg.create_pool(
+            host=Config.PG_HOST,
+            port=Config.PG_PORT,
+            user=Config.PG_USER,
+            password=Config.PG_PASS,
+            database=Config.PG_DATA,
+        )
+        flask_logger.info("Соединение с базой данных PostgreSQL установлено.")
+        return pool
+    except Exception as e:
+        flask_logger.error(f"Ошибка подключения к БД PostgreSQL: {e}", exc_info=True)
+        raise
 
 
-def create_app(config_class=Config):
-    app = Flask(__name__)
+def create_app(config_class=Config) -> T1App:
+    """
+    Создает и настраивает Flask приложение.
+    """
+    app = T1App(__name__)
     app.config.from_object(config_class)
 
-    db.init_app(app)
-    migrate.init_app(app, db)
-    login.init_app(app)
-    mail.init_app(app)
-    moment.init_app(app)
-    babel.init_app(app, locale_selector=get_locale)
-    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
-        if app.config['ELASTICSEARCH_URL'] else None
-    app.redis = Redis.from_url(app.config['REDIS_URL'])
-    app.task_queue = rq.Queue('microblog-tasks', connection=app.redis)
+    # Инициализация базы данных
+    pool = asyncio.run(get_pool())
+    db = Database(pool)
+    asyncio.run(db.create())
+
+    app.db = db
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
 
-    from app.auth import bp as auth_bp
-    app.register_blueprint(auth_bp, url_prefix='/auth')
+    # from app.auth import bp as auth_bp
+    # app.register_blueprint(auth_bp, url_prefix='/auth')
 
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
 
-    from app.cli import bp as cli_bp
-    app.register_blueprint(cli_bp)
+    # from app.cli import bp as cli_bp
+    # app.register_blueprint(cli_bp)
 
     from app.api import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
 
-    if not app.debug and not app.testing:
-        if app.config['MAIL_SERVER']:
-            auth = None
-            if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
-                auth = (app.config['MAIL_USERNAME'],
-                        app.config['MAIL_PASSWORD'])
-            secure = None
-            if app.config['MAIL_USE_TLS']:
-                secure = ()
-            mail_handler = SMTPHandler(
-                mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
-                fromaddr='no-reply@' + app.config['MAIL_SERVER'],
-                toaddrs=app.config['ADMINS'], subject='Microblog Failure',
-                credentials=auth, secure=secure)
-            mail_handler.setLevel(logging.ERROR)
-            app.logger.addHandler(mail_handler)
-
-        if app.config['LOG_TO_STDOUT']:
-            stream_handler = logging.StreamHandler()
-            stream_handler.setLevel(logging.INFO)
-            app.logger.addHandler(stream_handler)
-        else:
-            if not os.path.exists('logs'):
-                os.mkdir('logs')
-            file_handler = RotatingFileHandler('logs/microblog.log',
-                                               maxBytes=10240, backupCount=10)
-            file_handler.setFormatter(logging.Formatter(
-                '%(asctime)s %(levelname)s: %(message)s '
-                '[in %(pathname)s:%(lineno)d]'))
-            file_handler.setLevel(logging.INFO)
-            app.logger.addHandler(file_handler)
-
-        app.logger.setLevel(logging.INFO)
-        app.logger.info('Microblog startup')
-
+    # Логирование запуска приложения
+    flask_logger.info("Flask приложение успешно запущено.")
     return app
 
 
-from app import models
+app_ = create_app()
+
+
+if __name__ == "__main__":
+    flask_logger.info("?????")
+    app_.run(host="0.0.0.0", port=1161, debug=True)

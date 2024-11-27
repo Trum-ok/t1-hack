@@ -1,6 +1,10 @@
 import httpx
 from enum import Enum
-from anthropic import AsyncAnthropic
+from pydantic import ValidationError
+from anthropic import AsyncAnthropic, MessageStream
+from flask import Response, jsonify, request
+
+from dev import Message
 
 
 class AnthropicModel(Enum):
@@ -68,6 +72,43 @@ class AnthropicClient:
             raise RuntimeError(f"Ошибка при запросе к Anthropic: {e}") from e
 
 
+def anthropic_route(source: str, model: str) -> tuple[Response, int]:
+    try:
+        model_enum = AnthropicModel[model]
+    except KeyError:
+        return jsonify({"error": f"Модель {model} не поддерживается."}), 400
+
+    data: dict = request.get_json()
+    if not data or "prompt" not in data:
+        return jsonify({"error": "Тело запроса должно содержать 'prompt' и 'api_key."}), 400
+
+    prompt = data.get("prompt", "")
+    api_key = data["api_key"]
+    max_tokens = data.get("max_tokens", 512)
+
+    if not api_key:
+        return jsonify({"error": "API key is required."}), 400
+
+    try:
+        raw_response = asyncio.run(
+            anthropic_client.send_message(
+                model=model_enum,
+                user_message=prompt,
+                max_tokens=max_tokens
+            )
+        )
+
+        # Преобразуем ответ в объект Pydantic
+        try:
+            message = Message(**raw_response['response'])
+            return jsonify(message.dict()), 200
+        except ValidationError as ve:
+            return jsonify({"error": "Ошибка валидации ответа от модели.", "details": ve.errors()}), 500
+
+    except Exception as e:
+        return jsonify({"error": f"Ошибка при работе с API: {str(e)}"}), 500
+
+
 if __name__ == "__main__":
     import os
     import asyncio
@@ -82,7 +123,9 @@ if __name__ == "__main__":
     user_message = "Hello, Claude"
 
     try:
-        response = asyncio.run(anthropic_client.send_message(model=model, user_message=user_message, max_tokens=512))
+        raw_response = asyncio.run(anthropic_client.send_message(model=model, user_message=user_message, max_tokens=512))
+        print(raw_response)
+        response = Message(**raw_response['response'])
         print("Response:", response)
 
         """
