@@ -1,10 +1,11 @@
 import httpx
+import asyncio
 from enum import Enum
 from pydantic import ValidationError
 from anthropic import AsyncAnthropic, MessageStream
 from flask import Response, jsonify, request
 
-from dev import Message
+from models.dev import Message
 
 
 class AnthropicModel(Enum):
@@ -65,9 +66,9 @@ class AnthropicClient:
                     }
                 ],
             )
-            return {
-                "response": response
-            }
+            json_response = {"id": response.id,
+                             "content": response.content[0].text}
+            return {"response": json_response}
         except Exception as e:
             raise RuntimeError(f"Ошибка при запросе к Anthropic: {e}") from e
 
@@ -86,6 +87,8 @@ def anthropic_route(source: str, model: str) -> tuple[Response, int]:
     api_key = data["api_key"]
     max_tokens = data.get("max_tokens", 512)
 
+    anthropic_client = AnthropicClient(api_key=api_key)
+
     if not api_key:
         return jsonify({"error": "API key is required."}), 400
 
@@ -100,8 +103,8 @@ def anthropic_route(source: str, model: str) -> tuple[Response, int]:
 
         # Преобразуем ответ в объект Pydantic
         try:
-            message = Message(**raw_response['response'])
-            return jsonify(message.dict()), 200
+            message = raw_response
+            return jsonify(message), 200
         except ValidationError as ve:
             return jsonify({"error": "Ошибка валидации ответа от модели.", "details": ve.errors()}), 500
 
@@ -111,7 +114,7 @@ def anthropic_route(source: str, model: str) -> tuple[Response, int]:
 
 if __name__ == "__main__":
     import os
-    import asyncio
+
     from dotenv import load_dotenv
 
     load_dotenv(override=True)
@@ -124,9 +127,9 @@ if __name__ == "__main__":
 
     try:
         raw_response = asyncio.run(anthropic_client.send_message(model=model, user_message=user_message, max_tokens=512))
-        print(raw_response)
-        response = Message(**raw_response['response'])
-        print("Response:", response)
+        # print(raw_response)
+        # response = Message(**raw_response['response'])
+        print("Response:", raw_response)
 
         """
         Пример ответа

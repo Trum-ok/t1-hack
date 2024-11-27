@@ -90,5 +90,6 @@ app_ = create_app()
 
 
 if __name__ == "__main__":
-    flask_logger.info("?????")
-    app_.run(host="0.0.0.0", port=1161, debug=True)
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+    app_.run(host=os.getenv("HOST", '0.0.0.0'), port=5000, debug=True)

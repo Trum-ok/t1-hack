@@ -6,8 +6,7 @@ from models.dev import Models
 from models.anthropi import anthropic_route
 
 
-
-@bp.route("/api/llm/<source>/<model>", methods=['POST'])
+@bp.route("/llm/<source>/<model>", methods=['POST'])
 def get_answer_from_llm(source: str, model: str):
     """
     Обрабатывает запрос к LLM для заданного источника и модели.
