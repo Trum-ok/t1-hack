@@ -1,24 +1,15 @@
-from flask import render_template, request
-from app import db
+import logging
+from flask import jsonify
 from app.errors import bp
-from app.api.errors import error_response as api_error_response
+
+logger = logging.getLogger("WEB")
 
 
-def wants_json_response():
-    return request.accept_mimetypes['application/json'] >= \
-        request.accept_mimetypes['text/html']
-
-
-@bp.app_errorhandler(404)
-def not_found_error(error):
-    if wants_json_response():
-        return api_error_response(404)
-    return render_template('errors/404.html'), 404
-
-
-@bp.app_errorhandler(500)
-def internal_error(error):
-    db.session.rollback()
-    if wants_json_response():
-        return api_error_response(500)
-    return render_template('errors/500.html'), 500
+@bp.errorhandler(Exception)
+def handle_exception(e):
+    logging.error(f"Error occurred: {str(e)}", exc_info=True)
+    response = {
+        "error": str(e),
+        "type": type(e).__name__
+    }
+    return jsonify(response), 500
