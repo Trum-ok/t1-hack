@@ -1,0 +1,55 @@
+{{ define "mongodb_add"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/database.css">
+    <title>Add MongoDB</title>
+</head>
+<body>
+    <div class="body">
+        <div class="navigation">
+            <h1 class="navigation__header">T1 virtual</h1>
+            <div class="naviagtion__block1">
+                <a class="block1__text"><img src="/static/images/brick.png" alt="" class="block1__image">Конструктор<img src="/static/images/right-arrow.png" alt="" class="block1__image"></a>
+                <a class="block1__text"><img src="/static/images/llm.png" alt="" class="block1__image">Выбор LLM<img src="/static/images/right-arrow.png" alt="" class="block1__image"></a>
+                <a class="block1__text"><img src="/static/images/upload.png" alt="" class="block1__image">Загрузка<img src="/static/images/right-arrow.png" alt="" class="block1__image"></a>
+            </div>
+        </div>
+        <div class="main">
+            <div class="header">
+                <div class="header__buttons">
+                    <a href="#" class="header__button"><img src="/static/images/play.png" alt="" class="block1__image">Run</a>
+                    <a href="/uploads/add" class="header__button"><img src="/static/images/plus.png" alt="" class="block1__image">Добавить</a>
+                </div>
+            </div>
+            <form action="/uploads/add/database/mongodb/submit" method="POST" class="database-form">
+                <h2>Подключение к MongoDB</h2>
+            
+                <label for="host">Хост:</label>
+                <input type="text" id="host" name="host" placeholder="Введите хост" required>
+            
+                <label for="port">Порт:</label>
+                <input type="number" id="port" name="port" placeholder="Введите порт" required>
+            
+                <label for="user">Пользователь:</label>
+                <input type="text" id="user" name="user" placeholder="Введите имя пользователя" required>
+            
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+            
+                <label for="dbname">Имя Базы Данных:</label>
+                <input type="text" id="dbname" name="dbname" placeholder="Введите имя базы данных" required>
+            
+                <button type="submit" class="submit-btn">Подключиться</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+{{ end }}

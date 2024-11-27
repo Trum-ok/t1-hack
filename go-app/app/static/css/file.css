@@ -1,0 +1,61 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%;
+    margin: auto;
+    margin-top: 40px;
+}
+
+.file-label {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    background-color: #f0f0f0; /* Серый фон */
+    border: 2px dashed #cccccc; /* Пунктирная рамка */
+    padding: 40px; /* Увеличенное поле */
+    border-radius: 10px; /* Скругленные углы */
+    cursor: pointer;
+    color: #666666; /* Текст серого цвета */
+    font-size: 18px; /* Увеличенный текст */
+    font-weight: bold;
+    text-align: center;
+    height: 400px;
+    transition: all 0.3s ease-in-out;
+}
+
+.file-label:hover {
+    background-color: #e0e0e0; /* Более темный серый при наведении */
+    border-color: #007bff; /* Синяя рамка при наведении */
+    color: #007bff; /* Синий текст при наведении */
+}
+
+.file-label input {
+    margin-top: 180px;
+    border: 0px;
+    background-color: transparent; /* Прячем реальное поле ввода */
+}
+
+.file-types {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #888888;
+}
+
+.submit-btn {
+    border: 1px solid #E5E7EB;
+    font-size: 18px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    color: #888888;
+    font-weight: 500;
+    padding: 10px 20px 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.submit-btn:hover {
+    background-color: #e0e0e0; /* Более темный серый при наведении */
+    border-color: #007bff; /* Синяя рамка при наведении */
+    color: #007bff;
+}
+

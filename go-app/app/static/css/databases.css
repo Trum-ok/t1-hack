@@ -1,0 +1,45 @@
+.content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 250px);
+    width: 80%;
+    margin: auto;
+    gap: 20px; /* расстояние между элементами */
+    margin-top: 10px;
+}
+
+.content__block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: #f9f9f9; /* фоновый цвет для блока */
+    padding: 20px;
+    border: 1px solid #ddd; /* рамка */
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;/* скругленные углы */
+}
+
+.content__block:hover {
+    padding: 16px;
+    background-color: #d4d4d4;
+}
+
+.content__image {
+    width: 100px;
+    margin-top: 30px;
+}
+
+.main__text {
+    text-align: start;
+    width: 80%;
+    margin: 0px;
+    margin: auto;
+    margin-top: 30px;
+}
+
+.content__block-header {
+    text-decoration: none;
+    color: #2b2c2c;
+}

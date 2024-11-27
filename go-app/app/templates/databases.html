@@ -1,0 +1,54 @@
+{{ define "databases" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/databases.css">
+    <title>Choose database</title>
+</head>
+<body>
+    <div class="body">
+        <div class="navigation">
+            <h1 class="navigation__header">T1 virtual</h1>
+            <div class="naviagtion__block1">
+                <a href="#" class="block1__text"><img src="/static/images/brick.png" alt="" class="block1__image">Конструктор<img src="/static/images/right-arrow.png" alt="" class="block1__image"></a>
+                <a href="#" class="block1__text"><img src="/static/images/llm.png" alt="" class="block1__image">Выбор LLM<img src="/static/images/right-arrow.png" alt="" class="block1__image"></a>
+                <a href="/uploads/" class="block1__text"><img src="/static/images/upload.png" alt="" class="block1__image">Загрузка<img src="/static/images/right-arrow.png" alt="" class="block1__image"></a>
+            </div>
+        </div>
+        <div class="main">
+            <div class="header">
+                <div class="header__buttons">
+                    <a href="#" class="header__button"><img src="/static/images/play.png" alt="" class="block1__image">Run</a>
+                    <a href="/uploads/add" class="header__button"><img src="/static/images/plus.png" alt="" class="block1__image">Добавить</a>
+                </div>
+            </div>
+            <h2 class="main__text">Выбирете, что вы хотите загрузить</h2>
+            <div class="content">
+                <a href="/uploads/add/database/postgressql/" class="content__block">
+                    <img src="/static/images/database.png" alt="" class="content__image">
+                    <p class="content__block-header">PostgresSql</p>
+                </a>
+                <a href="/uploads/add/database/elasticsearch/" class="content__block">
+                    <img src="/static/images/database.png" alt="" class="content__image">
+                    <p class="content__block-header">ElasticSearch</p>
+                </a>
+                <a href="/uploads/add/database/mongodb/" class="content__block">
+                    <img src="/static/images/database.png" alt="" class="content__image">
+                    <p class="content__block-header">MongoDB</p>
+                </a>
+                <a href="/uploads/add/database/mysql/" class="content__block">
+                    <img src="/static/images/database.png" alt="" class="content__image">
+                    <p class="content__block-header">MySql</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{{ end }}
