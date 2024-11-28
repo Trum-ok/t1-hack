@@ -1,13 +1,15 @@
+import os
+import json
 import httpx
 import asyncio
 from enum import Enum
 from pydantic import ValidationError
 from anthropic import AsyncAnthropic, MessageStream
 from flask import Response, jsonify, request
-
 from anthropic.types import Message
+from vectors.extractors import KnowledgeBaseBuilder
 
-# from models.dev import Message
+kb = KnowledgeBaseBuilder()
 
 
 class AnthropicModel(Enum):
@@ -117,10 +119,27 @@ def anthropic_route(model: str) -> tuple[Response, int]:
         return jsonify({"error": "API key is required."}), 400
 
     try:
+        knowledge = os.path.abspath(os.path.join(os.path.dirname(__file__), "knowledge.json"))
+        kb.process_and_index(knowledge, source_type="file")
+        kb.save_index()
+
+        top_k = data.get("top_k", 5)
+        results, _ = kb.search(prompt, top_k)
+        retrieved_context = "\n\n".join(results)
+
+        rag_prompt = (
+            f"Контекст из базы знаний:\n\n{retrieved_context}\n\n"
+            f"Вопрос пользователя: {prompt}\n\n"
+            "Ответьте максимально точно на основе контекста."
+        )
+
+        print(rag_prompt)
+
+
         raw_response = asyncio.run(
             anthropic_client.send_message(
                 model=model_enum,
-                user_message=prompt,
+                user_message=rag_prompt,
                 max_tokens=max_tokens
             )
         )
