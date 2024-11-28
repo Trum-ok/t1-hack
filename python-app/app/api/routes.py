@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 
 from app.api import bp
 from models.dev import Models
@@ -20,3 +20,12 @@ def get_answer_from_llm(source: str, model: str):
         return anthropic_route(model)
 
     return jsonify({"error": f"Source '{source}' not implemented yet."}), 501
+
+
+@bp.route('/pipe/', methods=['POST'])
+def get_pipeline():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No pipeline to execute"}), 400
+
+    pass
