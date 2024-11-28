@@ -17,10 +17,12 @@ class Node(ABC):
     Класс ноды, от которого наследуются все остальные ноды
     """
     def __init__(self, type_: str, parent=None, childs=None, *args, **kwargs):
-        self.type_ = type_
-        self.parent = parent
-        self.childs = childs if childs is not None else []
-        self.input_data = {}
+        self.type_ = type_  # Установка типа ноды
+        self.parent = parent  # Родительская нода
+        self.childs = childs if childs is not None else []  # Список дочерних нод
+        self.input_data = {
+            "eoc": False
+        }
         self.output_data = {}
 
     @abstractmethod
@@ -33,8 +35,8 @@ class Node(ABC):
 
 class GreatingNode(Node):
     def __init__(self, type_: str, parent: Node = None, childs: list[Node] = None, message: str = ""):
-        super().__init__(type_, parent, childs)  # Вызов конструктора родителя
-        self.message = message  # Инициализация нового атрибута
+        super().__init__(type_, parent, childs)
+        self.message = message
 
     def process(self, input_data: dict) -> dict:
         """
@@ -42,7 +44,6 @@ class GreatingNode(Node):
         """
         output = input_data.copy()
         output['message'] = self.message
-        output['eoc'] = False
         return output
 
 
@@ -51,6 +52,8 @@ class MessageNode(Node):
         super().__init__(type_, parent, childs)
         self.message = message
 
+    def process(self, input_data: dict) -> dict:
+        return super().process(input_data)
 
 
 class TriggerNode(Node):
