@@ -164,3 +164,8 @@ cython_debug/
 .DS_Store
 logs/
 *.log
+
+s3/config/
+s3/data/
+*.index
+.index

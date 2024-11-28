@@ -1,0 +1,10 @@
+.ruff
+.venv/
+.index
+*.index
+LICENCSE
+*.env
+.env
+logs/*
+logs/
+__pychache__/

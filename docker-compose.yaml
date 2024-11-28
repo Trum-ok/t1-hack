@@ -3,3 +3,5 @@ services:
     build: ./app
     depends_on:
       - minio
+      - postgres
+      - python-app
