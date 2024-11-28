@@ -5,6 +5,8 @@ from docx import Document
 from PyPDF2 import PdfReader
 from abc import ABC
 from pymongo import MongoClient
+import mysql.connector
+import psycopg2
 
 
 class Loader(ABC):

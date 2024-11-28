@@ -10,7 +10,7 @@ import pdfplumber
 from io import BytesIO
 from bs4 import BeautifulSoup
 from transformers import BertModel, BertTokenizer
-from config import user, password, endpoint, backet
+from config import backet
 from s3.main import minio_client
 
 

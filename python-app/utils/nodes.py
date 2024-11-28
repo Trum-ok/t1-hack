@@ -20,10 +20,10 @@ class Node(ABC):
         self.type_ = type_  # Установка типа ноды
         self.parent = parent  # Родительская нода
         self.childs = childs if childs is not None else []  # Список дочерних нод
-        input_data = {
+        self.input_data = {
             "eoc": False
         }
-        output = {}
+        self.output_data = {}
 
     @abstractmethod
     def process(self, input_data: dict) -> dict:
@@ -48,8 +48,9 @@ class GreatingNode(Node):
 
 
 class MessageNode(Node):
-    def __init__(self, type_: str, parent=None, childs=None, *args, **kwargs):
+    def __init__(self, type_: str, parent: Node = None, childs: list[Node] = None, message: str = ""):
         super().__init__(type_, parent, childs)
+        self.message = message
 
     def process(self, input_data: dict) -> dict:
         return super().process(input_data)
