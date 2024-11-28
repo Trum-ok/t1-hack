@@ -11,6 +11,16 @@ services:
       - "${PG_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  
+  app:
+    build: .
+    container_name: go-app
+    depends_on:
+      - postgres
+    environment:
+      DB_CONNECTION_STRING: "postgresql://myuser:mypassword@postgres:5432/mydatabase?sslmode=disable"
+    ports:
+      - "8080:8080"
 
 volumes:
   postgres_data:
