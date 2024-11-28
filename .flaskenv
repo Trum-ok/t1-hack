@@ -1,2 +1,0 @@
-FLASK_APP=mvpa.py
-FLASK_DEBUG=1

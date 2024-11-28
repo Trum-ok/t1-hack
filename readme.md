@@ -1,6 +1,6 @@
 # T1-Hack
 
-![img](t1.jpg)
+![img](_images/t1.jpg)
 
 <hr>
 
@@ -21,10 +21,14 @@
 in dev
 ```bash
 docker-compose -f s3/docker-compose-minio.yaml up -d
+docker-compose -f db/docker-compose-postgres.yaml up -d
+docker-compose -f python-app/docker-compose-py.yaml up -d
 docker-compose -f docker-compose-app.yaml up -d
 ```
 1. Запуск локального S3-хранилища
-2. пупупу
+2. Запуск локальной PostgreSQL
+3. Запуск python-части проекта
+4. Запуск go-части проекта
 
     > [!WARNING]  
     > Локальный запуск требует серьезных вычислительных ресурсов (**GPU**)
@@ -38,65 +42,14 @@ docker-compose -f docker-compose-app.yaml up -d
 ## Модели, используемые в проекте
 - [DeepPavlov/rubert-base-cased-sentence](https://huggingface.co/DeepPavlov/rubert-base-cased-sentence) - токенизация для семантического поиска
 - [Anthropic Claude 3.5 Sonnet](https://www.anthropic.com/news/claude-3-5-sonnet) - для использование по API на сайте
-- []() - для локальных запусков / запусков в контуре
-  
+- [meta-llama/Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) - для локальных запусков / запусков в контуре
+
+    > [!WARNING]  
+    > Локальный запуск требует указание токена доступа с hugging face, так как llama 3.2 является gated-моделью, к которой надо получать доступ.
 
 ## Файловая структура проекта
 ```bash
- ├── app    - 
- │   ├── api
- │   │   ├── __init__.py
- │   │   └── routes.py
- │   ├── errors
- │   │   ├── __init__.py
- │   │   └── handlers.py
- │   ├── knowlege_base
- │   │   ├── __init__.py
- │   │   └── routes.py
- │   ├── main
- │   │   ├── __init__.py
- │   │   └── routes.py
- │   └── __init__.py
- ├── db      - вспомогательные файлы для работы с БД
- │   ├── app_db
- │   │   ├── tables
- │   │   │   ├── __init__.py
- │   │   │   ├── databases.py
- │   │   │   ├── files.py
- │   │   │   └── websites.py
- │   │   ├── base.py
- │   │   └── main.py
- │   ├── nosql
- │   ├── sql
- │   ├── vector
- │   └── __init__.py
- ├── faiss          - файлы для работы с FAISS
- │   ├── __init__.py
- │   ├── extractors.py
- │   └── main.py
- ├── models         - надстройки для удобной работы с API
- │   ├── __init__.py
- │   ├── dev.py
- │   ├── anthropi.py
- │   ├── google.py
- │   ├── llama.py
- │   └── openai.py
- ├── s3             - локальное S3 хранилище
- │   ├── main.py
- │   └── docker-compose-minio.yaml - настройки запуска локального S3
- ├── utils
- │   ├── __init__.py
- │   ├── log.py
- │   └── nodes.py
- ├── .dockerignore
- ├── .gitignore
- ├── Dockerfile
- ├── LICENSE.txt
- ├── config.py
- ├── docker-compose.yaml - главный docker-compose файл
- ├── nodes.md
- ├── readme.md
- └── requirements.txt
+ 
  ```
 
  ## Лицензия
@@ -105,4 +58,4 @@ This project is licensed under the MIT License.
 
 ## Авторы
 
-Создано командой Invalid Syntax с большой любовью и огромными усилиями.
+Создано командой Invalid Syntax с большой любовью и огромными усилиями <3
